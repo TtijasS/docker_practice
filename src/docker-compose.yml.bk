@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  server:
+    build:
+      context: ./dockerfiles/ssh_server
+      dockerfile: Dockerfile
+    container_name: ubuntu-server
+    ports:
+      - "2222:22" # Expose SSH for debugging or external SSH access
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.1.2
+
+  client:
+    build:
+      context: ./dockerfiles/ssh_client
+      dockerfile: Dockerfile
+    container_name: ubuntu-client
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.1.3
+    command: tail -f /dev/null # Keeps the client running
+
+  apache:
+    build:
+      context: ./dockerfiles/apache2
+      dockerfile: Dockerfile
+    container_name: apache-server
+    ports:
+      - "8080:80" # Expose Apache2
+    networks:
+      mynetwork:
+        ipv4_address: 192.168.1.4
+    volumes:
+      - ./my-website:/var/www/html # Mount the website directory to Apache's root
+
+  openvpn-server:
+    build:
+      context: ./dockerfiles/opevpn_server
+      dockerfile: Dockerfile
+    container_name: openvpn-server
+    networks:
+      mynetwork:
+        ipv4_address:
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 192.168.1.0/24

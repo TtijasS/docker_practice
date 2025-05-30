@@ -1,0 +1,17 @@
+services:
+  openvpn-server:
+    image: openvpn/openvpn-as  # Use the official OpenVPN AS image
+    container_name: openvpn-as
+    cap_add:
+      - MKNOD
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun  # Enable TUN device
+    ports:
+      - "943:943"    # OpenVPN Admin UI
+      - "443:443"    # OpenVPN VPN traffic
+      - "1194:1194/udp"  # OpenVPN UDP VPN traffic
+    volumes:
+      # - /as_config:/openvpn  # Bind mount for OpenVPN config
+      - ./as_config:/openvpn  # Or use relative path.
+    restart: unless-stopped  # Restart policy to ensure the container restarts automatically

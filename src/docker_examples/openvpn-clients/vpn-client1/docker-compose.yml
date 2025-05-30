@@ -1,0 +1,13 @@
+services:
+  vpn-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vpn-client1:latest
+    container_name: vpn-client1
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun
+    stdin_open: true
+    tty: true
